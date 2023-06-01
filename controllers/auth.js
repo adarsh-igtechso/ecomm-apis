@@ -35,7 +35,7 @@ export const register = async (req, res, next) => {
       console.log(error);
       throw "Can't create account";
     }
-    res.user_id = newUser._id;
+    // res.user_id = newUser._id;
     // next();
     return res.status(201).json({ msg: "Successfully created a user account" });
   } catch (error) {
