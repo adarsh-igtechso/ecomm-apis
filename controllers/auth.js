@@ -79,11 +79,9 @@ export const createToken = (req, res) => {
 
 export const profile = async (req, res) => {
   try {
-    const token = req.cookies.user;
-    const userId = jwt.verify(token, JWT_SECRET_KEY);
-    let user;
+    let userId = req.id, user;
     try {
-      user = await User.findById(userId.user.id).select("-password");
+      user = await User.findById(userId).select("-password");
     } catch (error) {
       throw "Can't get the user";
     }

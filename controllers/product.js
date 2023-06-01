@@ -32,7 +32,7 @@ export const getProduct = async (req, res) => {
     const productId = req.params.id;
     let product;
     try {
-      product = await Product.findById(productId).select("-password");
+      product = await Product.findById(productId);
     } catch (error) {
       throw "Can't get the product";
     }
@@ -42,7 +42,7 @@ export const getProduct = async (req, res) => {
     return res.status(200).json({ product });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ err: "Can't verify the login" });
+    return res.status(400).json({ err: "Can't find the product"});
   }
 };
 
