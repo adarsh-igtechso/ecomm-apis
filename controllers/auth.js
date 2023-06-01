@@ -11,6 +11,7 @@ import {
   validatePassword,
 } from "../utils/validator.js";
 import User from "../models/user.js";
+import { sendMail } from "../utils/mail.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -107,9 +108,11 @@ export const forgotPassword = async (req, res) => {
       expiresIn: "300s",
     });
 
+    sendMail(existingUser.email, token)
+
     return res.status(200).json({ token: token });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(400).json({ err: "Can't reset the password" });
   }
 };
@@ -117,11 +120,21 @@ export const forgotPassword = async (req, res) => {
 export const forgotPasswordVerify = async (req, res) => {
   try {
     const { token, password } = req.body;
+    jwt.verify(token, JWT_SECRET_KEY, (err, decoded) => {
+      if (err) {
+        err = {
+          name: "TokenExpiredError",
+          message: "jwt expired",
+        };
+        throw err;
+      }
+    })
     const userId = jwt.verify(token, JWT_SECRET_KEY);
-    
     const hashPassword = await bcrypt.hash(password, 10);
     try {
-      await User.findByIdAndUpdate(userId.user.userId, {password:hashPassword})
+      await User.findByIdAndUpdate(userId.user.userId, {
+        password: hashPassword,
+      });
     } catch (error) {
       console.log(error);
       throw "Can't update the password";
@@ -130,9 +143,9 @@ export const forgotPasswordVerify = async (req, res) => {
     if (!validatePassword(password))
       throw "Please provide password in exprected format";
 
-    return res.status(200).json({msg: "Successfully updated the password"})
+    return res.status(200).json({ msg: "Successfully updated the password" });
   } catch (error) {
     console.log(error);
-    return res.status({ err: error });
+    return res.status(400).json({ err: error });
   }
 };
