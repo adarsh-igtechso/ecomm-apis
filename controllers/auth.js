@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken';
-import * as dotenv from 'dotenv';
+import jwt from "jsonwebtoken";
+import * as dotenv from "dotenv";
 
 dotenv.config();
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -73,24 +73,66 @@ export const createToken = (req, res) => {
   res.cookie("user", token, {
     expire: new Date(Date.now() + 1000 * 45),
   });
-  return res.status(200).json({msg:"Successfully logged in"});
+  return res.status(200).json({ msg: "Successfully logged in" });
 };
 
-
-
-export const profile = async(req, res)=>{
+export const profile = async (req, res) => {
+  try {
+    const token = req.cookies.user;
+    const userId = jwt.verify(token, JWT_SECRET_KEY);
+    let user;
     try {
-        const token = req.cookies.user;
-        const userId = jwt.verify(token, JWT_SECRET_KEY)
-        let user;
-        try {
-            user = await User.findById(userId.user.id).select("-password");
-        } catch (error) {
-            throw "Can't get the user"
-        }
-        return res.status(200).json({user});
+      user = await User.findById(userId.user.id).select("-password");
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({err:"Can't verify the login"})
+      throw "Can't get the user";
     }
-}
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ err: "Can't verify the login" });
+  }
+};
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!validateEmail(email)) throw "Wrong email id provided";
+    let existingUser = await User.findOne({ email });
+    if (!existingUser) throw "User doesn't exists! Please create a account!!!";
+
+    const userId = existingUser._id;
+
+    const token = jwt.sign({ user: { userId } }, JWT_SECRET_KEY, {
+      expiresIn: "300s",
+    });
+
+    return res.status(200).json({ token: token });
+  } catch (error) {
+    console.log(error)
+    return res.status(400).json({ err: "Can't reset the password" });
+  }
+};
+
+export const forgotPasswordVerify = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const userId = jwt.verify(token, JWT_SECRET_KEY);
+    
+    const hashPassword = await bcrypt.hash(password, 10);
+    try {
+      await User.findByIdAndUpdate(userId.user.userId, {password:hashPassword})
+    } catch (error) {
+      console.log(error);
+      throw "Can't update the password";
+    }
+
+    if (!validatePassword(password))
+      throw "Please provide password in exprected format";
+
+    return res.status(200).json({msg: "Successfully updated the password"})
+  } catch (error) {
+    console.log(error);
+    return res.status({ err: error });
+  }
+};
