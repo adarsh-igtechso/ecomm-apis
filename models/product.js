@@ -14,6 +14,9 @@ const productSchema = new mongoose.Schema({
     required: true,
     select: false
   },
+  price:{
+    type:Number
+  }
 });
 
 const Product = mongoose.model("Product", productSchema);
