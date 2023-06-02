@@ -73,7 +73,7 @@ export const cancelOrder = async (req, res) => {
     const orderId = req.params.id;
     let myList;
     try {
-      myList = await Order.findByIdAndDelete(orderId);
+      myList = await Order.findOneAndDelete({_id:orderId, userId:userId});
     } catch (error) {
       throw "Can't cancel Order";
     }
