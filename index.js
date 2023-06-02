@@ -12,6 +12,7 @@ import { productCategoryRouter } from './routes/productCategories.js';
 import { orderRouter } from './routes/order.js';
 import { reviewRouter } from './routes/review.js';
 import { inventoryRouter } from './routes/inventory.js';
+import { paymentRouter } from './routes/payment.js';
 
 export const app = express();
 
@@ -32,3 +33,4 @@ app.use('/api/v1/product-categories/', productCategoryRouter)
 app.use('/api/v1/orders/', orderRouter)
 app.use('/api/v1/reviews/', reviewRouter)
 app.use('/api/v1/inventory/', inventoryRouter)
+app.use('/api/v1/payment/', paymentRouter)
