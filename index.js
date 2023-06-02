@@ -6,6 +6,7 @@ import { userRouter } from './routes/users.js';
 import { productRouter } from './routes/products.js';
 import { wishlistRouter } from './routes/wishlists.js';
 import { productCategoryRouter } from './routes/productCategories.js';
+import { orderRouter } from './routes/order.js';
 
 export const app = express();
 
@@ -23,3 +24,4 @@ app.use('/api/v1/users/', userRouter)
 app.use('/api/v1/products/', productRouter)
 app.use('/api/v1/wishlist/', wishlistRouter)
 app.use('/api/v1/product-categories/', productCategoryRouter)
+app.use('/api/v1/orders/', orderRouter)

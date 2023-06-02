@@ -56,7 +56,6 @@ export const deleteProductCategory = async (req, res) => {
     } catch (error) {
       throw "Can't delete the product category";
     }
-
     return res.status(200).json({ msg: "Product successfully deleted" });
   } catch (error) {
     console.log(error);
@@ -64,16 +63,18 @@ export const deleteProductCategory = async (req, res) => {
   }
 };
 
-
-
 export const updateProductCategory = async (req, res) => {
   try {
     const productCategoryId = req.params.id;
-    console.log(productCategoryId)
+    console.log(productCategoryId);
     let { name, tags, productIds } = req.body;
     if (!name || !tags || !productIds) throw "Incomplete description";
     try {
-      await ProductCategory.findByIdAndUpdate(productCategoryId, {name, tags, productIds});
+      await ProductCategory.findByIdAndUpdate(productCategoryId, {
+        name,
+        tags,
+        productIds,
+      });
     } catch (error) {
       console.log(error);
       throw "Product category can't be updated.";

@@ -23,6 +23,3 @@ const Product = mongoose.model("Product", productSchema);
 
 export default Product;
 
-
-// 112645
-// 11 / 27

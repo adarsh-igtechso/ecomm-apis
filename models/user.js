@@ -14,12 +14,12 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false
   },
-//   mobNo: {
-//     type: String,
-//   },
-//   address:{
-//     type:String
-//   }
+  mobNo: {
+    type: Number,
+  },
+  address:{
+    type:String
+  }
 });
 
 const User = mongoose.model("User", userSchema);
